@@ -17,14 +17,20 @@ namespace neu26g_labb2.Game
         private readonly LevelData levelData = new();
         private readonly Player? player;
 
-        public Game()
+        private readonly HashSet<(int X, int Y)> discovered = [];
+        private const int ViewDistance = 5;
+
+        public Game() : this("../../../level1.txt") {}
+
+        public Game(string mapFilePath)
         {
-            levelData.Load("../../../level1.txt");
+            levelData.Load(mapFilePath);
             player = levelData.Elements.OfType<Player>().FirstOrDefault() ?? throw new Exception("Player not found in level data.");
         }
 
         public void Run()
         {
+            UpdateExploration();
             while (true)
             {
                 Update();
@@ -132,6 +138,27 @@ namespace neu26g_labb2.Game
                 // Player moves to an empty space
                 player.X = newX;
                 player.Y = newY;
+                UpdateExploration();
+
+            }
+        }
+
+        private void UpdateExploration()
+        {
+            for (int x = player.X - ViewDistance;
+                 x <= player.X + ViewDistance; x++)
+            {
+                for (int y = player.Y - ViewDistance;
+                     y <= player.Y + ViewDistance; y++)
+                {
+                    int dx = x - player.X;
+                    int dy = y - player.Y;
+
+                    if (dx * dx + dy * dy <= ViewDistance * ViewDistance)
+                    {
+                        discovered.Add((x, y));
+                    }
+                }
             }
         }
 
@@ -145,10 +172,28 @@ namespace neu26g_labb2.Game
             Console.Clear();
             foreach (var element in levelData.Elements)
             {
-                element.Draw();
+                switch (element)
+                {
+                    case Player:
+                        element.Draw();
+                        break;
+                    case Wall when discovered.Contains((element.X, element.Y)):
+                        element.Draw();
+                        break;
+                    case Enemy when IsWithinViewDistance(element, player):
+                        element.Draw();
+                        break;
+                }
             }
         }
 
-}
+        private bool IsWithinViewDistance(LevelElement element, Player player)
+        {
+            int dx = element.X - player.X;
+            int dy = element.Y - player.Y;
+            return dx * dx + dy * dy <= ViewDistance * ViewDistance;
+
+        }
+        }
 
 }
