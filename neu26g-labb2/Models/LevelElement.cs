@@ -20,7 +20,9 @@ namespace neu26g_labb2.Models
 
         public void Draw()
         {
-            // TODO: Draw Symbol at X/Y using Color.
+            Console.SetCursorPosition(X, Y);
+            Console.ForegroundColor = Color;
+            Console.Write(Symbol);
         }
     }
 }
