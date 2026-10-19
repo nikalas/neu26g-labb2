@@ -1,34 +1,54 @@
-﻿namespace neu26g_labb2.Models
+﻿using System;
+
+namespace neu26g_labb2.Models
 {
-    internal class Dice
+    public class Dice
     {
-        public readonly int numberOfDice;
-        public readonly int sidesPerDice;
-        public readonly int modifier;
+        public int NumberOfDice { get; }
+        public int SidesPerDice { get; }
+        public int Modifier { get; }
 
         public Dice(int numberOfDice, int sidesPerDice, int modifier)
         {
-            this.numberOfDice = numberOfDice;
-            this.sidesPerDice = sidesPerDice;
-            this.modifier = modifier;
+            if (numberOfDice <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(numberOfDice));
+            }
+
+            if (sidesPerDice <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(sidesPerDice));
+            }
+
+            NumberOfDice = numberOfDice;
+            SidesPerDice = sidesPerDice;
+            Modifier = modifier;
         }
 
-        public Dice(int numberOfDice, int sidesPerDice) : this(numberOfDice, sidesPerDice, 0) {}
+        public Dice(int numberOfDice, int sidesPerDice) : this(numberOfDice, sidesPerDice, 0) { }
 
         public int Throw()
         {
-            int total = 0;
-            for (int i = 0; i < numberOfDice; i++)
+            int total = Modifier;
+
+            for (int i = 0; i < NumberOfDice; i++)
             {
-                total += new Random().Next(1, sidesPerDice + 1);
+                total += Random.Shared.Next(1, SidesPerDice + 1);
             }
-            return total + modifier;
+
+            return total;
         }
 
         public override string ToString()
         {
-            return $"{numberOfDice}d{sidesPerDice}+{modifier}";
-        }
+            string modifier = Modifier switch
+            {
+                > 0 => $"+{Modifier}",
+                < 0 => Modifier.ToString(),
+                _ => string.Empty
+            };
 
+            return $"{NumberOfDice}d{SidesPerDice}{modifier}";
+        }
     }
 }
