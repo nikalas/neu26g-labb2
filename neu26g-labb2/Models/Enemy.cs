@@ -2,32 +2,31 @@
 
 namespace neu26g_labb2.Models
 {
-
-    internal abstract class Enemy : LevelElement
+    public abstract class Enemy : Actor
     {
-        public string Name { get; protected set; }
-        public int HP { get; set; }
-
-        internal Dice AttackDice { get; }
-        internal Dice DefenceDice { get; }
-
-        internal Enemy(
+        protected Enemy(
             int x,
             int y,
             char symbol,
-            System.ConsoleColor color,
+            ConsoleColor color,
             string name,
             int hp,
             Dice attackDice,
             Dice defenceDice
-        ) : base(x, y, symbol, color)
+        ) : base(x, y, symbol, color, name, hp, attackDice, defenceDice)
         {
-            Name = name;
-            HP = hp;
-            AttackDice = attackDice;
-            DefenceDice = defenceDice;
         }
 
-        public abstract void Update();
+        public sealed override void OnTick(IGameContext context)
+        {
+            if (IsDead || context.Player.IsDead)
+            {
+                return;
+            }
+
+            Update(context);
+        }
+
+        public abstract void Update(IGameContext context);
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace neu26g_labb2.Models
 {
-    internal class Snake : Enemy
+    public class Snake : Enemy
     {
+        private const int AggroRange = 2;
+
         public Snake(int x, int y) : base(
             x,
             y,
@@ -13,14 +13,30 @@ namespace neu26g_labb2.Models
             ConsoleColor.Green,
             "Snake",
             25,
-            new Dice(1, 6),
-            new Dice(1, 4))
+            new Dice(3, 4, 2),
+            new Dice(1, 8, 5))
         {
         }
 
-        public override void Update()
+        public override void Update(IGameContext context)
         {
-            // TODO: Implement snake update logic
+            int dx = X - context.Player.X;
+            int dy = Y - context.Player.Y;
+
+            if (dx * dx + dy * dy > AggroRange * AggroRange)
+            {
+                return;
+            }
+
+            int moveX = Math.Abs(dx) >= Math.Abs(dy) ? Math.Sign(dx) : 0;
+            int moveY = Math.Abs(dy) > Math.Abs(dx) ? Math.Sign(dy) : 0;
+
+            if (moveX == 0 && moveY == 0)
+            {
+                return;
+            }
+
+            context.TryMove(this, X + moveX, Y + moveY);
         }
     }
 }

@@ -1,25 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace neu26g_labb2.Models
 {
-    internal class Rat : Enemy
+    public class Rat : Enemy
     {
+        private static readonly Direction[] Directions = Enum.GetValues<Direction>();
+
         public Rat(int x, int y) : base(
             x,
             y,
             'r',
             ConsoleColor.Red,
             "Rat",
-            5,
-            new Dice(1, 4),
-            new Dice(1, 2))
+            10,
+            new Dice(1, 6, 3),
+            new Dice(1, 6, 1))
         {
         }
-        public override void Update()
+
+        public override void Update(IGameContext context)
         {
-            // TODO: Implement rat update logic
+            Direction direction = Directions[Random.Shared.Next(Directions.Length)];
+            (int dx, int dy) = direction.Offset();
+
+            context.TryMove(this, X + dx, Y + dy);
         }
     }
 }
