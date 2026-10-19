@@ -1,18 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace neu26g_labb2.Models
 {
-    internal class Player : LevelElement
+    public class Player : Actor
     {
-        public Player(int x, int y) : base(x, y, '@', ConsoleColor.White)
+        public Direction? PendingDirection { get; set; }
+
+        public Player(int x, int y) : base(
+            x,
+            y,
+            '@',
+            ConsoleColor.White,
+            "Player",
+            100,
+            new Dice(2, 6, 2),
+            new Dice(2, 6))
         {
         }
 
-        public void Update()
+        public override void OnTick(IGameContext context)
         {
-            // TODO: Implement player update logic
+            if (IsDead || PendingDirection is not Direction direction)
+            {
+                return;
+            }
+
+            PendingDirection = null;
+
+            (int dx, int dy) = direction.Offset();
+            context.TryMove(this, X + dx, Y + dy);
         }
     }
 }
