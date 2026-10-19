@@ -1,27 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 
 namespace neu26g_labb2.Models
 {
-    internal class LevelData
+    public class LevelData
     {
         private readonly List<LevelElement> elements = new();
+        private readonly ReadOnlyCollection<LevelElement> readonlyElements;
 
-        public IReadOnlyList<LevelElement> Elements => elements.AsReadOnly();
+        public LevelData()
+        {
+            readonlyElements = elements.AsReadOnly();
+        }
 
+        public IReadOnlyList<LevelElement> Elements => readonlyElements;
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
         public void Load(string filename)
         {
+            elements.Clear();
+
             string[] lines = File.ReadAllLines(filename);
 
-            int y = 0;
-            foreach (string line in lines)
+            Height = lines.Length;
+            Width = lines.Length == 0 ? 0 : lines.Max(line => line.Length);
+
+            for (int y = 0; y < lines.Length; y++)
             {
-                int x = 0;
-                foreach (char c in line)
+                string line = lines[y];
+
+                for (int x = 0; x < line.Length; x++)
                 {
-                    switch (c)
+                    switch (line[x])
                     {
                         case '#':
                             elements.Add(new Wall(x, y));
@@ -35,13 +45,27 @@ namespace neu26g_labb2.Models
                         case '@':
                             elements.Add(new Player(x, y));
                             break;
-                        default:
-                            break;
                     }
-                    x++;
                 }
-                y++;
             }
+        }
+
+        public void Add(LevelElement element)
+        {
+            elements.Add(element);
+        }
+
+        public bool Remove(LevelElement element)
+        {
+            return elements.Remove(element);
+        }
+
+        public LevelElement? ElementAt(int x, int y)
+        {
+            return elements.FirstOrDefault(element =>
+                element.X == x &&
+                element.Y == y &&
+                !(element is Actor actor && actor.IsDead));
         }
     }
 }
