@@ -1,5 +1,5 @@
 ﻿using System;
-using neu26g_labb2.Game;
+using GameApp = neu26g_labb2.Game.Game;
 
 namespace neu26g_labb2
 {
@@ -7,7 +7,7 @@ namespace neu26g_labb2
     {
         static void Main(string[] args)
         {
-            Game.Game game = new();
+            GameApp game = args.Length > 0 ? new GameApp(args[0]) : new GameApp();
             game.Run();
         }
     }
