@@ -191,12 +191,18 @@ namespace neu26g_labb2.Game
                     return false;
                 }
 
+                if (key is ConsoleKey.OemPeriod or ConsoleKey.Decimal)
+                {
+                    player.PendingDirection = null;
+                    return true;
+                }
+
                 Direction? direction = key switch
                 {
-                    ConsoleKey.UpArrow or ConsoleKey.W => Direction.Up,
-                    ConsoleKey.DownArrow or ConsoleKey.S => Direction.Down,
-                    ConsoleKey.LeftArrow or ConsoleKey.A => Direction.Left,
-                    ConsoleKey.RightArrow or ConsoleKey.D => Direction.Right,
+                    ConsoleKey.UpArrow or ConsoleKey.W or ConsoleKey.K => Direction.Up,
+                    ConsoleKey.DownArrow or ConsoleKey.S or ConsoleKey.J => Direction.Down,
+                    ConsoleKey.LeftArrow or ConsoleKey.A or ConsoleKey.H => Direction.Left,
+                    ConsoleKey.RightArrow or ConsoleKey.D or ConsoleKey.L => Direction.Right,
                     _ => null
                 };
 
