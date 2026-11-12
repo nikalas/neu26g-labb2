@@ -177,7 +177,6 @@ namespace neu26g_labb2.Game
         private void TriggerTick()
         {
             Tick?.Invoke(this);
-            RemoveDeadEnemies();
         }
 
         private bool TryReadPlayerAction()
@@ -221,14 +220,6 @@ namespace neu26g_labb2.Game
             return levelData.Elements.OfType<Enemy>().Any(enemy => !enemy.IsDead);
         }
 
-        private void RemoveDeadEnemies()
-        {
-            foreach (Enemy enemy in levelData.Elements.OfType<Enemy>().Where(enemy => enemy.IsDead).ToList())
-            {
-                levelData.Remove(enemy);
-            }
-        }
-
         private void UpdateExploration()
         {
             for (int x = player.X - ViewDistance; x <= player.X + ViewDistance; x++)
@@ -260,7 +251,7 @@ namespace neu26g_labb2.Game
                     case Wall when discovered.Contains((element.X, element.Y)):
                         element.Draw();
                         break;
-                    case Enemy enemy when !enemy.IsDead && IsWithinViewDistance(enemy):
+                    case Enemy enemy when IsWithinViewDistance(enemy):
                         element.Draw();
                         break;
                 }

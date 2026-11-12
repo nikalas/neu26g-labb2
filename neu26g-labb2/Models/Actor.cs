@@ -33,15 +33,23 @@ namespace neu26g_labb2.Models
 
         public int TakeDamage(int amount)
         {
-            if (amount <= 0)
+            if (amount <= 0 || IsDead)
             {
                 return 0;
             }
 
             int applied = Math.Min(amount, HP);
             HP -= applied;
+
+            if (IsDead)
+            {
+                OnDeath();
+            }
+
             return applied;
         }
+
+        protected virtual void OnDeath() { }
 
         public abstract void OnTick(IGameContext context);
     }

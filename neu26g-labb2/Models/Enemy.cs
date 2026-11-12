@@ -27,6 +27,11 @@ namespace neu26g_labb2.Models
             Update(context);
         }
 
+        protected override void OnDeath()
+        {
+            Color = ConsoleColor.DarkGray;
+        }
+
         public abstract void Update(IGameContext context);
     }
 }
